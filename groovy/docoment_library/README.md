@@ -1,7 +1,8 @@
-CheckDLStore.groovy
+**CheckDLStore.groovy**
+
 This script checks for missing physical files in the Liferay Document Library corresponding to entries in the DLFileVersion table. It is designed to be executed via "Server Administration" → "Script" console in DXP 2024.q2 >=JDK11
 
-What It Does
+**What It Does**
 Iterates over all DLFileEntry and DLFileVersion records.
 
 Verifies if the expected file exists in the DLStore.
@@ -10,7 +11,7 @@ Logs missing files with detailed metadata in a format for easy export.
 
 Optionally, deletes orphaned DLFileVersion and DLFileEntry records (if safeMode is set to false).
 
-Output
+**Output**
 When a missing file is detected, the script prints lines with the following fields:
 
 Missing file detected:
@@ -28,7 +29,7 @@ Missing file detected:
   ctCollectionId: 0
 
 
-Configuration
+**Configuration**
 safeMode = true: Read-only mode (default). No records are deleted.
 
 safeMode = false: Automatically deletes orphaned records from:
@@ -39,7 +40,7 @@ DLFileEntry (if it has no remaining versions)
 
 Related ExpandoRow and WorkflowInstanceLink entries
 
-How to Run
+**How to Run**
 Open Liferay's Control Panel → Server Administration → Script.
 
 
@@ -47,6 +48,6 @@ Paste the script and execute.
 
 💡 IMPORTANT!!!: Start in safeMode = true to audit missing files before enabling deletion.
 
-Requirements
+**Requirements**
 Liferay DXP (version with DLFileEntry, DLFileVersion, DLStoreUtil, etc.)
 JDK 11 or greater
