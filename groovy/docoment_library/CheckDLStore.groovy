@@ -91,15 +91,11 @@ class CheckDLStore {
                         String fileName = fileEntry?.getFileName()
                         String mimeType = fileEntry?.getMimeType()
 
-                        String folderName = folderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID ?
-                            "ROOT" :
-                            DLFolderLocalServiceUtil.fetchDLFolder(folderId)?.getName()
-
+                        String folderPath = getFullFolderPath(folderId)
                         String groupName = GroupLocalServiceUtil.fetchGroup(groupId)?.getDescriptiveName(locale)
                         String virtualHostname = CompanyLocalServiceUtil.getCompany(companyId)?.getVirtualHostname()
 
-                        String downloadURL = "/documents/${groupId}/${folderId}/${name}/${storeUuid}"
-
+                        String fullURL = "/documents/${groupId}/${folderId}/${name}/${storeUuid}"
                         out.println("Missing file detected:")
                         out.println("  fileEntryId: ${fileEntryId}")
                         out.println("  fileVersionId: ${fileVersionId}")
@@ -108,10 +104,10 @@ class CheckDLStore {
                         out.println("  fileTitle: ${fileTitle}")
                         out.println("  fileName: ${fileName}")
                         out.println("  mimeType: ${mimeType}")
-                        out.println("  folderId: ${folderId}, folderName: ${folderName}")
+                        out.println("  folderId: ${folderId}, folderPath: ${folderPath}")
                         out.println("  groupId: ${groupId}, siteName: ${groupName}")
                         out.println("  companyId: ${companyId}, virtualHost: ${virtualHostname}")
-                        out.println("  Expected download URL: ${downloadURL}")
+                        out.println("  Expected download URL: ${fullURL}")
                         out.println("  ctCollectionId: ${ctCollectionId}")
                         out.println("----")
 
@@ -148,6 +144,23 @@ class CheckDLStore {
         } finally {
             DataAccess.cleanUp(con, ps, rs)
         }
+    }
+
+    String getFullFolderPath(long folderId) {
+        if (folderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+            return "ROOT"
+        }
+
+        List<String> folderNames = []
+
+        while (folderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+            def folder = DLFolderLocalServiceUtil.fetchDLFolder(folderId)
+            if (folder == null) break
+            folderNames.add(0, folder.getName())
+            folderId = folder.getParentFolderId()
+        }
+
+        return "ROOT > " + folderNames.join(" > ")
     }
 }
 
